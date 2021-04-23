@@ -1,0 +1,9 @@
+com\DiamondKinetics\Swing\Model\Accelerometer.class
+com\DiamondKinetics\Swing\Controller\SwingDataController.class
+com\DiamondKinetics\Swing\DemoApplication.class
+com\DiamondKinetics\Swing\Service\ISwingData.class
+com\DiamondKinetics\Swing\Util\FileUtil.class
+com\DiamondKinetics\Swing\Model\ResultData.class
+com\DiamondKinetics\Swing\Service\SwingData.class
+com\DiamondKinetics\Swing\Model\SensorData.class
+com\DiamondKinetics\Swing\Model\Gyroscope.class
