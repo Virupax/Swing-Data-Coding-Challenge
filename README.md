@@ -9,10 +9,10 @@ Project Structure
 
 
 
-SwingDataController is the base controller - /api/v1
+**SwingDataController is the base controller - /api/v1**
 
 To View demostration of sample data use following API endpoints
-1) searchContinuityAboveValue - /api/v1/search-continuity-above-value
-2) backSearchContinuityWithinRange - /api/v1/back-search-continuity-within-range
-3) searchContinuityAboveValueTwoSignals - /api/v1/search-continuity-above-two-values
-4) searchMultiContinuityWithinRange - /api/v1/search-multicontinuity-within-range
+1) **searchContinuityAboveValue** - /api/v1/search-continuity-above-value
+2) **backSearchContinuityWithinRange** - /api/v1/back-search-continuity-within-range
+3) **searchContinuityAboveValueTwoSignals** - /api/v1/search-continuity-above-two-values
+4) **searchMultiContinuityWithinRange** - /api/v1/search-multicontinuity-within-range
