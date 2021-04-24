@@ -6,10 +6,12 @@
 
 
 ![image](https://user-images.githubusercontent.com/9819057/115941746-bc76dc80-a474-11eb-807d-097532cd7d02.png)
+
 Project Structure
 
-/api/v1
-SwingDataController
+
+
+SwingDataController is the base controller - /api/v1
 
 To View demostration of sample data use following API endpoints
 1) searchContinuityAboveValue - /api/v1/search-continuity-above-value
