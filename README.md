@@ -1,2 +1,18 @@
 # Swing Data Coding Challenge
  Diamond Kinetics Swing Data analysis coding requirement solution. Simple Java Spring Project
+
+
+#Sample Spring Boot app to demonstrate swing data challenge
+
+Project Structure
+![image](https://user-images.githubusercontent.com/9819057/115941746-bc76dc80-a474-11eb-807d-097532cd7d02.png)
+
+
+/api/v1
+SwingDataController
+
+To View demostration of sample data use following API endpoints
+1) searchContinuityAboveValue - /api/v1/search-continuity-above-value
+2) backSearchContinuityWithinRange - /api/v1/back-search-continuity-within-range
+3) searchContinuityAboveValueTwoSignals - /api/v1/search-continuity-above-two-values
+4) searchMultiContinuityWithinRange - /api/v1/search-multicontinuity-within-range
