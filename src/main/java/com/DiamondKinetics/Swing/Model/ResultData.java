@@ -3,11 +3,13 @@ package com.DiamondKinetics.Swing.Model;
 import java.util.List;
 import java.util.Map;
 
+//Model for Response of API calls
 public class ResultData {
     private  int index;
     private Map<String, List<Integer>> indices;
     private String errorMessage;
 
+    //Getters and Setters
     public int getIndex() {
         return index;
     }

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 
-
+//Concrete implementation of the interface ISwingData
 public class SwingData implements ISwingData {
 
 
@@ -31,22 +31,25 @@ public class SwingData implements ISwingData {
             resultData.setErrorMessage("Wrong Indices or larger winLength");
             return resultData;
         }
-
-        int indexMatchingCriteria = -1;
-        for(int i = indexBegin; i < indexEnd; i++){
-            if(data.get(i).isGreaterThan(threshold)){
-                int tempWinLength = winLength;
-                while(tempWinLength > 0 && data.get(i).isGreaterThan(threshold)){
-                    tempWinLength--;
-                    i++;
-                }
-                if(tempWinLength == 0){
-                    indexMatchingCriteria = i;
-                    break;
+        try {
+            int indexMatchingCriteria = -1;
+            for (int i = indexBegin; i < indexEnd; i++) {
+                if (data.get(i).isGreaterThan(threshold)) {
+                    int tempWinLength = winLength;
+                    while (tempWinLength > 0 && data.get(i).isGreaterThan(threshold)) {
+                        tempWinLength--;
+                        i++;
+                    }
+                    if (tempWinLength == 0) {
+                        indexMatchingCriteria = i - winLength;
+                        break;
+                    }
                 }
             }
+            resultData.setIndex(indexMatchingCriteria);
+        }catch (Exception ex){
+            resultData.setErrorMessage(ex.getMessage());
         }
-        resultData.setIndex(indexMatchingCriteria);
         return resultData;
     }
 
@@ -70,21 +73,25 @@ public class SwingData implements ISwingData {
             return resultData;
         }
 
-        int indexMatchingCriteria = -1;
-        for(int i = indexBegin; i > indexEnd; i--){
-            if(data.get(i).isInBetween(thresholdLo, thresholdHi)){
-                int tempWinLength = winLength;
-                while(tempWinLength > 0 && data.get(i).isInBetween(thresholdLo, thresholdHi)){
-                    tempWinLength--;
-                    i--;
-                }
-                if(tempWinLength == 0){
-                    indexMatchingCriteria = i;
-                    break;
+        try {
+            int indexMatchingCriteria = -1;
+            for (int i = indexBegin; i > indexEnd; i--) {
+                if (data.get(i).isInBetween(thresholdLo, thresholdHi)) {
+                    int tempWinLength = winLength;
+                    while (tempWinLength > 0 && data.get(i).isInBetween(thresholdLo, thresholdHi)) {
+                        tempWinLength--;
+                        i--;
+                    }
+                    if (tempWinLength == 0) {
+                        indexMatchingCriteria = i + winLength;
+                        break;
+                    }
                 }
             }
+            resultData.setIndex(indexMatchingCriteria);
+        }catch (Exception ex){
+            resultData.setErrorMessage(ex.getMessage());
         }
-        resultData.setIndex(indexMatchingCriteria);
         return resultData;
     }
 
@@ -104,26 +111,30 @@ public class SwingData implements ISwingData {
     public ResultData searchContinuityAboveValueTwoSignals(ArrayList<SensorData> data1, ArrayList<SensorData> data2, int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength) {
         ResultData resultData = new ResultData();
 
-        if(indexEnd < indexBegin || indexEnd - indexBegin > winLength){
+        if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
             return resultData;
         }
 
-        int indexMatchingCriteria = -1;
-        for(int i = indexBegin; i < indexEnd; i++){
-            if(data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)){
-                int tempWinLength = winLength;
-                while(tempWinLength > 0 && data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)){
-                    tempWinLength--;
-                    i++;
-                }
-                if(tempWinLength == 0){
-                    indexMatchingCriteria = i;
-                    break;
+        try {
+            int indexMatchingCriteria = -1;
+            for (int i = indexBegin; i < indexEnd; i++) {
+                if (data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)) {
+                    int tempWinLength = winLength;
+                    while (tempWinLength > 0 && data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)) {
+                        tempWinLength--;
+                        i++;
+                    }
+                    if (tempWinLength == 0) {
+                        indexMatchingCriteria = i - winLength;
+                        break;
+                    }
                 }
             }
+            resultData.setIndex(indexMatchingCriteria);
+        }catch (Exception ex){
+            resultData.setErrorMessage(ex.getMessage());
         }
-        resultData.setIndex(indexMatchingCriteria);
         return resultData;
     }
 
@@ -142,7 +153,7 @@ public class SwingData implements ISwingData {
     public ResultData searchMultiContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
 
-        if(indexEnd < indexBegin || indexEnd - indexBegin > winLength){
+        if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
             return resultData;
         }
@@ -151,25 +162,26 @@ public class SwingData implements ISwingData {
         List<Integer> endIndices = new ArrayList<>();
         Map<String,List<Integer>> map = new HashMap<>();
 
-
-        for(int i = indexBegin; i < indexEnd; i++){
-            if(data.get(i).isInBetween(thresholdLo, thresholdHi)){
-                int tempWinLength = winLength;
-                int j = i;
-                startIndices.add(i);
-                while(tempWinLength > 0 && data.get(j).isInBetween(thresholdLo, thresholdHi)){
-                    tempWinLength--;
-                    j++;
-                }
-                if(tempWinLength == 0){
-                    endIndices.add(j);
+        try {
+            for (int i = indexBegin; i < indexEnd; i++) {
+                if (data.get(i).isInBetween(thresholdLo, thresholdHi)) {
+                    int tempWinLength = winLength;
+                    while (tempWinLength > 0 && data.get(i).isInBetween(thresholdLo, thresholdHi)) {
+                        tempWinLength--;
+                        i++;
+                    }
+                    if (tempWinLength == 0) {
+                        startIndices.add(i - winLength);
+                        endIndices.add(i);
+                    }
                 }
             }
+            map.put("startIndices", startIndices);
+            map.put("endIndices", endIndices);
+            resultData.setIndices(map);
+        }catch (Exception ex){
+            resultData.setErrorMessage(ex.getMessage());
         }
-        map.put("startIndices",startIndices);
-        map.put("endIndices",endIndices);
-        resultData.setIndices(map);
-
         return resultData;
     }
 

@@ -16,4 +16,29 @@ public class Gyroscope {
         this.wy = wy;
         this.wz = wz;
     }
+
+    //Getters and Setters
+    public double getWx() {
+        return wx;
+    }
+
+    public void setWx(double wx) {
+        this.wx = wx;
+    }
+
+    public double getWy() {
+        return wy;
+    }
+
+    public void setWy(double wy) {
+        this.wy = wy;
+    }
+
+    public double getWz() {
+        return wz;
+    }
+
+    public void setWz(double wz) {
+        this.wz = wz;
+    }
 }

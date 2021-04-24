@@ -5,6 +5,7 @@ import com.DiamondKinetics.Swing.Model.SensorData;
 
 import java.util.ArrayList;
 
+//Interface driver for concrete class of SwingData Service
 public interface ISwingData {
     ResultData searchContinuityAboveValue(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData threshold, int winLength);
     ResultData backSearchContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength);
