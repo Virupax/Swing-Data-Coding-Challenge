@@ -1,44 +1,45 @@
 package com.DiamondKinetics.Swing.Model;
 
 public class Accelerometer {
-    double ax;
-    double ay;
-    double az;
+    Double ax;
+    Double ay;
+    Double az;
 
     Accelerometer(){
-        this.ax = 0;
-        this.ay = 0;
-        this.az = 0;
+        this.ax = null;
+        this.ay = null;
+        this.az = null;
     }
 
     Accelerometer(double ax, double ay, double az){
-        this.ax = ax;
-        this.ay = ay;
-        this.az = az;
+        setAx(ax);
+        setAy(ay);
+        setAz(az);
     }
 
     //Getters and Setters
-    public double getAx() {
+
+    public Double getAx() {
         return ax;
     }
 
-    public void setAx(double ax) {
+    public void setAx(Double ax) {
         this.ax = ax;
     }
 
-    public double getAy() {
+    public Double getAy() {
         return ay;
     }
 
-    public void setAy(double ay) {
+    public void setAy(Double ay) {
         this.ay = ay;
     }
 
-    public double getAz() {
+    public Double getAz() {
         return az;
     }
 
-    public void setAz(double az) {
+    public void setAz(Double az) {
         this.az = az;
     }
 }

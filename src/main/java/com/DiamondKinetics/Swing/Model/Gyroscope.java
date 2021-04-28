@@ -1,44 +1,45 @@
 package com.DiamondKinetics.Swing.Model;
 
 public class Gyroscope {
-    double wx;
-    double wy;
-    double wz;
+    Double wx;
+    Double wy;
+    Double wz;
 
     Gyroscope(){
-        this.wx = 0;
-        this.wy = 0;
-        this.wz = 0;
+        this.wx = null;
+        this.wy = null;
+        this.wz = null;
     }
 
     Gyroscope(double wx, double wy, double wz){
-        this.wx = wx;
-        this.wy = wy;
-        this.wz = wz;
+        setWx(wx);
+        setWy(wy);
+        setWz(wz);
     }
 
     //Getters and Setters
-    public double getWx() {
+
+    public Double getWx() {
         return wx;
     }
 
-    public void setWx(double wx) {
+    public void setWx(Double wx) {
         this.wx = wx;
     }
 
-    public double getWy() {
+    public Double getWy() {
         return wy;
     }
 
-    public void setWy(double wy) {
+    public void setWy(Double wy) {
         this.wy = wy;
     }
 
-    public double getWz() {
+    public Double getWz() {
         return wz;
     }
 
-    public void setWz(double wz) {
+    public void setWz(Double wz) {
         this.wz = wz;
     }
 }

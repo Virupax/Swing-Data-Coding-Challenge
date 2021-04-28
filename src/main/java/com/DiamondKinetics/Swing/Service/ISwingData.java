@@ -11,4 +11,12 @@ public interface ISwingData {
     ResultData backSearchContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength);
     ResultData searchContinuityAboveValueTwoSignals(ArrayList<SensorData> data1, ArrayList<SensorData> data2, int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength);
     ResultData searchMultiContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength);
+
+    ResultData searchContinuityAboveValue(int indexBegin, int indexEnd, SensorData threshold, int winLength);
+
+    ResultData backSearchContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength);
+
+    ResultData searchContinuityAboveValueTwoSignals(int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength);
+
+    ResultData searchMultiContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength);
 }

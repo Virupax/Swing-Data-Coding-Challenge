@@ -2,6 +2,7 @@ package com.DiamondKinetics.Swing.Service;
 
 import com.DiamondKinetics.Swing.Model.ResultData;
 import com.DiamondKinetics.Swing.Model.SensorData;
+import com.DiamondKinetics.Swing.Util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Map;
 
 //Concrete implementation of the interface ISwingData
 public class SwingData implements ISwingData {
+
+    public static final String SENSORDATAFILENAME = "/data/latestSwing.csv";
 
 
     /**
@@ -26,6 +29,7 @@ public class SwingData implements ISwingData {
     @Override
     public ResultData searchContinuityAboveValue(ArrayList<SensorData> data , int indexBegin, int indexEnd, SensorData threshold, int winLength) {
         ResultData resultData = new ResultData();
+        resultData.setSuccess(Boolean.FALSE);
 
         if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
@@ -42,6 +46,7 @@ public class SwingData implements ISwingData {
                     }
                     if (tempWinLength == 0) {
                         indexMatchingCriteria = i - winLength;
+                        resultData.setSuccess(Boolean.TRUE);
                         break;
                     }
                 }
@@ -67,6 +72,7 @@ public class SwingData implements ISwingData {
     @Override
     public ResultData backSearchContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
+        resultData.setSuccess(Boolean.FALSE);
 
         if(indexEnd > indexBegin || indexEnd - indexBegin > winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
@@ -84,6 +90,7 @@ public class SwingData implements ISwingData {
                     }
                     if (tempWinLength == 0) {
                         indexMatchingCriteria = i + winLength;
+                        resultData.setSuccess(Boolean.TRUE);
                         break;
                     }
                 }
@@ -110,6 +117,7 @@ public class SwingData implements ISwingData {
     @Override
     public ResultData searchContinuityAboveValueTwoSignals(ArrayList<SensorData> data1, ArrayList<SensorData> data2, int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength) {
         ResultData resultData = new ResultData();
+        resultData.setSuccess(Boolean.FALSE);
 
         if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
@@ -127,11 +135,12 @@ public class SwingData implements ISwingData {
                     }
                     if (tempWinLength == 0) {
                         indexMatchingCriteria = i - winLength;
+                        resultData.setSuccess(Boolean.TRUE);
                         break;
                     }
                 }
             }
-            resultData.setIndex(indexMatchingCriteria);
+            resultData.setIndex(indexMatchingCriteria > 0 ? indexMatchingCriteria : null);
         }catch (Exception ex){
             resultData.setErrorMessage(ex.getMessage());
         }
@@ -152,6 +161,7 @@ public class SwingData implements ISwingData {
     @Override
     public ResultData searchMultiContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
+        resultData.setSuccess(Boolean.FALSE);
 
         if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
             resultData.setErrorMessage("Wrong Indices or larger winLength");
@@ -173,6 +183,7 @@ public class SwingData implements ISwingData {
                     if (tempWinLength == 0) {
                         startIndices.add(i - winLength);
                         endIndices.add(i);
+                        resultData.setSuccess(Boolean.TRUE);
                     }
                 }
             }
@@ -182,6 +193,27 @@ public class SwingData implements ISwingData {
         }catch (Exception ex){
             resultData.setErrorMessage(ex.getMessage());
         }
+        return resultData;
+    }
+
+    @Override
+    public ResultData searchContinuityAboveValue(int indexBegin, int indexEnd, SensorData threshold, int winLength){
+        ResultData resultData = searchContinuityAboveValue(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, threshold, winLength);
+        return resultData;
+    }
+    @Override
+    public ResultData backSearchContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
+        ResultData resultData = backSearchContinuityWithinRange(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+        return resultData;
+    }
+    @Override
+    public ResultData searchContinuityAboveValueTwoSignals(int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength){
+        ResultData resultData = searchContinuityAboveValueTwoSignals(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, threshold1, threshold2, winLength);
+        return resultData;
+    }
+    @Override
+    public ResultData searchMultiContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength){
+        ResultData resultData = searchMultiContinuityWithinRange(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
         return resultData;
     }
 

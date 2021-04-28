@@ -2,22 +2,22 @@ package com.DiamondKinetics.Swing.Model;
 
 public class SensorData {
 
-    long timeStamp;
+    Long timeStamp;
     Accelerometer accelerometer;
     Gyroscope gyroscope;
 
     public SensorData(){
-        this.timeStamp = 0;
-        this.accelerometer = new Accelerometer();
-        this.gyroscope = new Gyroscope();
+        this.timeStamp = null;
+        this.accelerometer = null;
+        this.gyroscope = null;
     }
 
     //Getters and Setters
-    public long getTimeStamp() {
+    public Long getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
+    public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
     }
 
