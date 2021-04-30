@@ -46,8 +46,9 @@ public class FileUtil {
     }
 
     private static InputStream getFileFromResourceAsStream(String fileName)  {
+        InputStream inputStream = DemoApplication.class.getResourceAsStream(fileName);
         // the stream holding the file content
-        try(InputStream inputStream = DemoApplication.class.getResourceAsStream(fileName)){
+        try{
             if (inputStream == null) {
                 throw new FileNotFoundException("file not found! " + fileName);
             }
