@@ -16,13 +16,10 @@ public class FileUtil {
 
     public static SensorData readCSVtoSensorDataList(String fileName)  {
         // Read all lines in from CSV file and add to String array
-        BufferedReader bufferedReader = null;
         String line = null;
         SensorData data = null;
-        try{
-            InputStream is = getFileFromResourceAsStream(fileName);
-            bufferedReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-
+        InputStream is = getFileFromResourceAsStream(fileName);
+        try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))){
             List<Long> timeStamp = new ArrayList<>();
             List<Double> ax = new ArrayList<>();
             List<Double> ay = new ArrayList<>();
@@ -42,7 +39,6 @@ public class FileUtil {
                 wz.add(Double.parseDouble(row[6]));
             }
             data = new SensorData(timeStamp, ax, ay, az, wx, wy, wz);
-            bufferedReader.close();
         }catch (IOException ex){
             logger.error(ex.getMessage()); //Add into internal logs
         }
@@ -50,19 +46,17 @@ public class FileUtil {
     }
 
     private static InputStream getFileFromResourceAsStream(String fileName)  {
-
-        InputStream inputStream = DemoApplication.class.getResourceAsStream(fileName);
-
         // the stream holding the file content
-        try{
+        try(InputStream inputStream = DemoApplication.class.getResourceAsStream(fileName)){
             if (inputStream == null) {
                 throw new FileNotFoundException("file not found! " + fileName);
             }
-
+            return inputStream;
         }catch (FileNotFoundException ex){
             logger.error(ex.getMessage()); //Add into internal logs
+        } catch (IOException ex) {
+            logger.error(ex.getMessage()); //Add into internal logs
         }
-        return inputStream;
-
+        return null;
     }
 }
