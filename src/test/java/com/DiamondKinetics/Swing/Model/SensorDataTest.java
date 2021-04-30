@@ -8,6 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SensorDataTest {
     private SensorData classUnderTest;
 
@@ -21,16 +24,25 @@ public class SensorDataTest {
 
     @Test
     public void settersGettersTest() {
+        List<Double> values = new ArrayList<>();
+        values.add(0.9455502);
+        values.add(-1.358932);
+        values.add(1.855502);
 
-        Accelerometer accelerometer = new Accelerometer(0.9455502, -1.358932, 1.855502);
-        Gyroscope gyroscope = new Gyroscope(0.9455502, -1.358932, 1.855502);
+        List<Long> timeStamp = new ArrayList<>();
+        timeStamp.add(2435353L);
+        timeStamp.add(3957359L);
+        timeStamp.add(0L);
+
+        Accelerometer accelerometer = new Accelerometer(values, values, values);
+        Gyroscope gyroscope = new Gyroscope(values, values, values);
 
 
-        classUnderTest.setTimeStamp(2435353L);
+        classUnderTest.setTimeStamp(timeStamp);
         classUnderTest.setAccelerometer(accelerometer);
         classUnderTest.setGyroscope(gyroscope);
 
-        assertEquals((Long) 2435353L,classUnderTest.getTimeStamp());
+        assertEquals(timeStamp,classUnderTest.getTimeStamp());
         assertEquals(accelerometer,classUnderTest.getAccelerometer());
         assertEquals(gyroscope,classUnderTest.getGyroscope());
 
@@ -40,19 +52,59 @@ public class SensorDataTest {
     }
 
 
+//    @Test
+//    public void settersGettersTest_NullValues() {
+//        assertNull(classUnderTest.getTimeStamp());
+//        assertNull(classUnderTest.getAccelerometer());
+//        assertNull(classUnderTest.getGyroscope());
+//    }
+
     @Test
-    public void settersGettersTest_NullValues() {
-        assertNull(classUnderTest.getTimeStamp());
-        assertNull(classUnderTest.getAccelerometer());
-        assertNull(classUnderTest.getGyroscope());
+    public void classMethodsGetColumnDataNull() {
+        Throwable e = null;
+
+        try {
+            classUnderTest.getColumnData(null);
+        } catch (Throwable ex) {
+            e = ex;
+        }
+        assertTrue(e instanceof NullPointerException);
+        assertEquals(null, e.getMessage());
     }
 
+    @Test
+    public void classMethodsGetColumnDataWrongValue() {
+        Throwable e = null;
+
+        try {
+            classUnderTest.getColumnData(SwingDataColumn.valueOf("xyz"));
+        } catch (Throwable ex) {
+            e = ex;
+        }
+        assertTrue(e instanceof IllegalArgumentException);
+    }
+
+
+    @Test
+    public void classMethodsGetColumnDataPass() {
+        Throwable e = null;
+        List<Double> list = new ArrayList<>();
+        try {
+            assertTrue(classUnderTest.getColumnData(SwingDataColumn.valueOf("wx")) instanceof  List);
+        } catch (Throwable ex) {
+            e = ex;
+        }
+    }
+
+
+
+    /* Removed them as the design changed
     @Test
     public void classMethodsIsGreaterThan(){
         Throwable e = null;
 
         try {
-            classUnderTest.isGreaterThan(new SensorData());
+            classUnderTest.isGreaterThan(null);
         } catch (Throwable ex) {
             e = ex;
         }
@@ -71,7 +123,7 @@ public class SensorDataTest {
         threshold.setAccelerometer(accelerometer);
         threshold.setGyroscope(gyroscope);
 
-        assertEquals(Boolean.TRUE, sensorData.isGreaterThan(threshold));
+//        assertEquals(Boolean.TRUE, sensorData.isGreaterThan(threshold));
 
 
         accelerometer = new Accelerometer(0.9455503, -1.358931, 1.855503);
@@ -79,7 +131,7 @@ public class SensorDataTest {
         threshold.setAccelerometer(accelerometer);
         threshold.setGyroscope(gyroscope);
 
-        assertEquals(Boolean.FALSE, sensorData.isGreaterThan(threshold));
+//        assertEquals(Boolean.FALSE, sensorData.isGreaterThan(threshold));
     }
 
 
@@ -88,7 +140,7 @@ public class SensorDataTest {
         Throwable e = null;
 
         try {
-            classUnderTest.isInBetween(new SensorData(), new SensorData());
+            classUnderTest.isInBetween(null, null);
         } catch (Throwable ex) {
             e = ex;
         }
@@ -114,14 +166,16 @@ public class SensorDataTest {
         thresholdHi.setGyroscope(gyroscope);
 
 
-        assertEquals(Boolean.TRUE, sensorData.isInBetween(thresholdLo,thresholdHi));
+//        assertEquals(Boolean.TRUE, sensorData.isInBetween(thresholdLo,thresholdHi));
 
         accelerometer = new Accelerometer(0.9455500, -1.358933, 1.855500);
         gyroscope = new Gyroscope(0.9455500, -1.358933, 1.855500);
         thresholdHi.setAccelerometer(accelerometer);
         thresholdHi.setGyroscope(gyroscope);
 
-        assertEquals(Boolean.FALSE, sensorData.isInBetween(thresholdLo,thresholdHi));
+//        assertEquals(Boolean.FALSE, sensorData.isInBetween(thresholdLo,thresholdHi));
     }
 
+
+     */
 }

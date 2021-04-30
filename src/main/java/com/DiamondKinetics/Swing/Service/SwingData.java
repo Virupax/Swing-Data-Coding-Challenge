@@ -2,18 +2,30 @@ package com.DiamondKinetics.Swing.Service;
 
 import com.DiamondKinetics.Swing.Model.ResultData;
 import com.DiamondKinetics.Swing.Model.SensorData;
+import com.DiamondKinetics.Swing.Model.SwingDataColumn;
 import com.DiamondKinetics.Swing.Util.FileUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 
 //Concrete implementation of the interface ISwingData
 public class SwingData implements ISwingData {
 
-    public static final String SENSORDATAFILENAME = "/data/latestSwing.csv";
+
+    private SensorData sensorData;
+    private IValidateSwingData iValidateSwingData;
+
+    @Autowired
+    public SwingData(){
+        this.sensorData = new SensorData();
+        this.iValidateSwingData = new ValidateSwingData();
+    }
+
 
 
     /**
@@ -26,32 +38,19 @@ public class SwingData implements ISwingData {
      * @param winLength
      * @return ResultData
      * */
-    @Override
-    public ResultData searchContinuityAboveValue(ArrayList<SensorData> data , int indexBegin, int indexEnd, SensorData threshold, int winLength) {
+    private ResultData searchContinuityAboveValue(List<Double> data, int indexBegin, int indexEnd, double threshold, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-
-        if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
-            resultData.setErrorMessage("Wrong Indices or larger winLength");
-            return resultData;
-        }
         try {
-            int indexMatchingCriteria = -1;
-            for (int i = indexBegin; i < indexEnd; i++) {
-                if (data.get(i).isGreaterThan(threshold)) {
-                    int tempWinLength = winLength;
-                    while (tempWinLength > 0 && data.get(i).isGreaterThan(threshold)) {
-                        tempWinLength--;
-                        i++;
-                    }
-                    if (tempWinLength == 0) {
-                        indexMatchingCriteria = i - winLength;
-                        resultData.setSuccess(Boolean.TRUE);
-                        break;
-                    }
-                }
+            Predicate<Double> greaterThanThreshold = i -> i > threshold;
+            Predicate<Double> alwaysTrue = i -> true;
+            Predicate<Integer> indexLimit = i -> i < indexEnd;
+
+            int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, 1,  winLength, greaterThanThreshold, alwaysTrue, indexLimit);
+            if(indexMatchingCriteria > -1){
+                resultData.setIndex(indexMatchingCriteria);
+                resultData.setSuccess(Boolean.TRUE);
             }
-            resultData.setIndex(indexMatchingCriteria);
         }catch (Exception ex){
             resultData.setErrorMessage(ex.getMessage());
         }
@@ -69,33 +68,19 @@ public class SwingData implements ISwingData {
      * @param winLength
      * @return ResultData
      * */
-    @Override
-    public ResultData backSearchContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
+    private ResultData backSearchContinuityWithinRange(List<Double> data, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-
-        if(indexEnd > indexBegin || indexEnd - indexBegin > winLength){
-            resultData.setErrorMessage("Wrong Indices or larger winLength");
-            return resultData;
-        }
-
         try {
-            int indexMatchingCriteria = -1;
-            for (int i = indexBegin; i > indexEnd; i--) {
-                if (data.get(i).isInBetween(thresholdLo, thresholdHi)) {
-                    int tempWinLength = winLength;
-                    while (tempWinLength > 0 && data.get(i).isInBetween(thresholdLo, thresholdHi)) {
-                        tempWinLength--;
-                        i--;
-                    }
-                    if (tempWinLength == 0) {
-                        indexMatchingCriteria = i + winLength;
-                        resultData.setSuccess(Boolean.TRUE);
-                        break;
-                    }
-                }
+            Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
+            Predicate<Double> alwaysTrue = i -> true;
+            Predicate<Integer> indexLimit = i -> i > indexEnd;
+
+            int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, -1,  winLength, withInThreshold, alwaysTrue, indexLimit);
+            if(indexMatchingCriteria > -1){
+                resultData.setIndex(indexMatchingCriteria);
+                resultData.setSuccess(Boolean.TRUE);
             }
-            resultData.setIndex(indexMatchingCriteria);
         }catch (Exception ex){
             resultData.setErrorMessage(ex.getMessage());
         }
@@ -114,37 +99,24 @@ public class SwingData implements ISwingData {
      * @param winLength
      * @return ResultData
      * */
-    @Override
-    public ResultData searchContinuityAboveValueTwoSignals(ArrayList<SensorData> data1, ArrayList<SensorData> data2, int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength) {
+    private ResultData searchContinuityAboveValueTwoSignals(List<Double> data1, List<Double> data2, int indexBegin, int indexEnd, double threshold1, double threshold2, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-
-        if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
-            resultData.setErrorMessage("Wrong Indices or larger winLength");
-            return resultData;
-        }
-
         try {
-            int indexMatchingCriteria = -1;
-            for (int i = indexBegin; i < indexEnd; i++) {
-                if (data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)) {
-                    int tempWinLength = winLength;
-                    while (tempWinLength > 0 && data1.get(i).isGreaterThan(threshold1) && data2.get(i).isGreaterThan(threshold2)) {
-                        tempWinLength--;
-                        i++;
-                    }
-                    if (tempWinLength == 0) {
-                        indexMatchingCriteria = i - winLength;
-                        resultData.setSuccess(Boolean.TRUE);
-                        break;
-                    }
-                }
+            Predicate<Double> list1Threshold = i -> i > threshold1;
+            Predicate<Double> list2Threshold = i -> i > threshold2;
+            Predicate<Integer> indexLimit = i -> i < indexEnd;
+
+            int indexMatchingCriteria = searchForCriteria(data1, data2, indexBegin, indexEnd, 1,  winLength, list1Threshold, list2Threshold, indexLimit);
+            if(indexMatchingCriteria > -1){
+                resultData.setIndex(indexMatchingCriteria);
+                resultData.setSuccess(Boolean.TRUE);
             }
-            resultData.setIndex(indexMatchingCriteria > 0 ? indexMatchingCriteria : null);
         }catch (Exception ex){
             resultData.setErrorMessage(ex.getMessage());
         }
         return resultData;
+
     }
 
     /**
@@ -158,63 +130,94 @@ public class SwingData implements ISwingData {
      * @param winLength
      * @return ResultData
      * */
-    @Override
-    public ResultData searchMultiContinuityWithinRange(ArrayList<SensorData> data, int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
+    private ResultData searchMultiContinuityWithinRange(List<Double > data, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
 
-        if(indexEnd < indexBegin || indexEnd - indexBegin < winLength){
-            resultData.setErrorMessage("Wrong Indices or larger winLength");
-            return resultData;
-        }
-
         List<Integer> startIndices = new ArrayList<>();
         List<Integer> endIndices = new ArrayList<>();
-        Map<String,List<Integer>> map = new HashMap<>();
+        Map<String, List<Integer>> map = new HashMap<>();
 
         try {
-            for (int i = indexBegin; i < indexEnd; i++) {
-                if (data.get(i).isInBetween(thresholdLo, thresholdHi)) {
-                    int tempWinLength = winLength;
-                    while (tempWinLength > 0 && data.get(i).isInBetween(thresholdLo, thresholdHi)) {
-                        tempWinLength--;
-                        i++;
-                    }
-                    if (tempWinLength == 0) {
-                        startIndices.add(i - winLength);
-                        endIndices.add(i);
-                        resultData.setSuccess(Boolean.TRUE);
-                    }
+            Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
+            Predicate<Double> alwaysTrue = i -> true;
+            Predicate<Integer> indexLimit = i -> i < indexEnd;
+
+            for(int i = indexBegin; i<indexEnd; i++){
+                int indexMatchingCriteria = searchForCriteria(data, data, i, indexEnd, 1, winLength, withInThreshold, alwaysTrue, indexLimit);
+                if (indexMatchingCriteria > -1) {
+                    startIndices.add(indexMatchingCriteria);
+                    endIndices.add(indexMatchingCriteria + winLength);
+                    resultData.setSuccess(Boolean.TRUE);
+                    i = indexMatchingCriteria;
                 }
             }
             map.put("startIndices", startIndices);
             map.put("endIndices", endIndices);
             resultData.setIndices(map);
-        }catch (Exception ex){
+
+        } catch (Exception ex) {
             resultData.setErrorMessage(ex.getMessage());
         }
         return resultData;
+
     }
 
+
     @Override
-    public ResultData searchContinuityAboveValue(int indexBegin, int indexEnd, SensorData threshold, int winLength){
-        ResultData resultData = searchContinuityAboveValue(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, threshold, winLength);
+    public ResultData searchContinuityAboveValue(String dataColumn, int indexBegin, int indexEnd, double threshold, int winLength){
+        iValidateSwingData.validateDataInputColumn(dataColumn);
+        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+        iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
+
+        ResultData resultData = searchContinuityAboveValue(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, threshold, winLength);
         return resultData;
     }
     @Override
-    public ResultData backSearchContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength) {
-        ResultData resultData = backSearchContinuityWithinRange(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+    public ResultData backSearchContinuityWithinRange(String dataColumn, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
+        iValidateSwingData.validateDataInputColumn(dataColumn);
+        iValidateSwingData.validateReverseBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+        iValidateSwingData.validateWinLength(indexEnd, indexBegin, winLength);
+        iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
+
+        ResultData resultData = backSearchContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
         return resultData;
     }
     @Override
-    public ResultData searchContinuityAboveValueTwoSignals(int indexBegin, int indexEnd, SensorData threshold1, SensorData threshold2, int winLength){
-        ResultData resultData = searchContinuityAboveValueTwoSignals(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, threshold1, threshold2, winLength);
+    public ResultData searchContinuityAboveValueTwoSignals(String dataColumn1, String dataColumn2, int indexBegin, int indexEnd, double threshold1, double threshold2, int winLength){
+        iValidateSwingData.validateDataInputColumn(dataColumn1);
+        iValidateSwingData.validateDataInputColumn(dataColumn2);
+        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+        iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
+
+        ResultData resultData = searchContinuityAboveValueTwoSignals(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn1)), sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn2)), indexBegin, indexEnd, threshold1, threshold2, winLength);
         return resultData;
     }
     @Override
-    public ResultData searchMultiContinuityWithinRange(int indexBegin, int indexEnd, SensorData thresholdLo, SensorData thresholdHi, int winLength){
-        ResultData resultData = searchMultiContinuityWithinRange(FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+    public ResultData searchMultiContinuityWithinRange(String dataColumn, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength){
+        iValidateSwingData.validateDataInputColumn(dataColumn);
+        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+        iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
+        ResultData resultData = searchMultiContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
         return resultData;
+    }
+
+    private int searchForCriteria(List<Double> data1, List<Double> data2, int indexBegin, int indexEnd, int step, int winLength, Predicate<Double> predicate1, Predicate<Double> predicate2, Predicate<Integer> predicate3){
+        int indexMatchingCriteria = -1;
+        for (int i = indexBegin; predicate3.test(i); i+=step) {
+            if ( predicate1.test(data1.get(i)) && predicate2.test(data2.get(i))) {
+                int tempWinLength = winLength;
+                while (tempWinLength > 0 && predicate1.test(data1.get(i)) && predicate2.test(data2.get(i))) {
+                    tempWinLength--;
+                    i+=step;
+                }
+                if (tempWinLength == 0) {
+                    indexMatchingCriteria = i - winLength;
+                    break;
+                }
+            }
+        }
+        return indexMatchingCriteria;
     }
 
 }

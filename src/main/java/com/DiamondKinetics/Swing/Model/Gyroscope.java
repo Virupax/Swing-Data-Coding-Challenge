@@ -1,9 +1,11 @@
 package com.DiamondKinetics.Swing.Model;
 
+import java.util.List;
+
 public class Gyroscope {
-    Double wx;
-    Double wy;
-    Double wz;
+    List<Double> wx;
+    List<Double> wy;
+    List<Double> wz;
 
     Gyroscope(){
         this.wx = null;
@@ -11,7 +13,7 @@ public class Gyroscope {
         this.wz = null;
     }
 
-    Gyroscope(double wx, double wy, double wz){
+    Gyroscope(List<Double> wx, List<Double> wy, List<Double> wz){
         setWx(wx);
         setWy(wy);
         setWz(wz);
@@ -19,27 +21,27 @@ public class Gyroscope {
 
     //Getters and Setters
 
-    public Double getWx() {
+    public List<Double> getWx() {
         return wx;
     }
 
-    public void setWx(Double wx) {
+    public void setWx(List<Double> wx) {
         this.wx = wx;
     }
 
-    public Double getWy() {
+    public List<Double> getWy() {
         return wy;
     }
 
-    public void setWy(Double wy) {
+    public void setWy(List<Double> wy) {
         this.wy = wy;
     }
 
-    public Double getWz() {
+    public List<Double> getWz() {
         return wz;
     }
 
-    public void setWz(Double wz) {
+    public void setWz(List<Double> wz) {
         this.wz = wz;
     }
 }

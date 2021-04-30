@@ -1,23 +1,32 @@
 package com.DiamondKinetics.Swing.Model;
 
-public class SensorData {
+import com.DiamondKinetics.Swing.Util.FileUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    Long timeStamp;
+import java.util.List;
+
+public class SensorData {
+    public static final String SENSORDATAFILENAME = "/data/latestSwing.csv";
+
+    List<Long> timeStamp;
     Accelerometer accelerometer;
     Gyroscope gyroscope;
 
+
+    @Autowired
     public SensorData(){
-        this.timeStamp = null;
-        this.accelerometer = null;
-        this.gyroscope = null;
+        SensorData temp =  FileUtil.readCSVtoSensorDataList(SENSORDATAFILENAME);
+        this.timeStamp = temp.getTimeStamp();
+        this.accelerometer = temp.getAccelerometer();
+        this.gyroscope = temp.getGyroscope();
     }
 
     //Getters and Setters
-    public Long getTimeStamp() {
+    public List<Long> getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Long timeStamp) {
+    public void setTimeStamp(List<Long> timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -37,36 +46,33 @@ public class SensorData {
         this.gyroscope = gyroscope;
     }
 
-    public SensorData(long timeStamp, double ax, double ay, double az, double wx, double wy, double wz){
+    public SensorData(List<Long> timeStamp, List<Double> ax, List<Double> ay, List<Double> az, List<Double> wx, List<Double> wy, List<Double> wz){
         this.timeStamp = timeStamp;
         this. accelerometer = new Accelerometer(ax,ay,az);
         this.gyroscope = new Gyroscope(wx,wy,wz);
     }
 
-    public boolean isGreaterThan(SensorData threshold){
-        if(this.accelerometer.ax > threshold.accelerometer.ax &&
-                this.accelerometer.ay > threshold.accelerometer.ay &&
-                this.accelerometer.az > threshold.accelerometer.az &&
-                this.gyroscope.wx > threshold.gyroscope.wx &&
-                this.gyroscope.wy > threshold.gyroscope.wy &&
-                this.gyroscope.wz > threshold.gyroscope.wz
-        ){
-            return true;
-        }
-        return false;
-    }
 
-    public boolean isInBetween(SensorData thresholdLo, SensorData thresholdHi){
-        if(this.accelerometer.ax > thresholdLo.accelerometer.ax && this.accelerometer.ax < thresholdHi.accelerometer.ax &&
-                this.accelerometer.ay > thresholdLo.accelerometer.ay &&  this.accelerometer.ax < thresholdHi.accelerometer.ax &&
-                this.accelerometer.az > thresholdLo.accelerometer.az && this.accelerometer.ax < thresholdHi.accelerometer.ax &&
-                this.gyroscope.wx > thresholdLo.gyroscope.wx && this.gyroscope.wx < thresholdHi.gyroscope.wx &&
-                this.gyroscope.wy > thresholdLo.gyroscope.wy && this.gyroscope.wx < thresholdHi.gyroscope.wx &&
-                this.gyroscope.wz > thresholdLo.gyroscope.wz && this.gyroscope.wx < thresholdHi.gyroscope.wx
-        ){
-            return true;
+    public List<Double> getColumnData(SwingDataColumn dataColumn){
+        List<Double> data;
+
+        switch (dataColumn){
+            case ax:    data = this.getAccelerometer().getAx();
+                break;
+            case ay :   data = this.getAccelerometer().getAy();
+                break;
+            case az :   data = this.getAccelerometer().getAz();
+                break;
+            case wx :   data = this.getGyroscope().getWx();
+                break;
+            case wy :   data = this.getGyroscope().getWy();
+                break;
+            case wz :   data = this.getGyroscope().getWz();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + dataColumn);
         }
-        return false;
+        return data;
     }
 
 }

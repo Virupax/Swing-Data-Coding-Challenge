@@ -1,9 +1,11 @@
 package com.DiamondKinetics.Swing.Model;
 
+import java.util.List;
+
 public class Accelerometer {
-    Double ax;
-    Double ay;
-    Double az;
+    List<Double> ax;
+    List<Double> ay;
+    List<Double> az;
 
     Accelerometer(){
         this.ax = null;
@@ -11,7 +13,7 @@ public class Accelerometer {
         this.az = null;
     }
 
-    Accelerometer(double ax, double ay, double az){
+    Accelerometer(List<Double> ax, List<Double> ay, List<Double> az){
         setAx(ax);
         setAy(ay);
         setAz(az);
@@ -19,27 +21,28 @@ public class Accelerometer {
 
     //Getters and Setters
 
-    public Double getAx() {
+
+    public List<Double> getAx() {
         return ax;
     }
 
-    public void setAx(Double ax) {
+    public void setAx(List<Double> ax) {
         this.ax = ax;
     }
 
-    public Double getAy() {
+    public List<Double> getAy() {
         return ay;
     }
 
-    public void setAy(Double ay) {
+    public void setAy(List<Double> ay) {
         this.ay = ay;
     }
 
-    public Double getAz() {
+    public List<Double> getAz() {
         return az;
     }
 
-    public void setAz(Double az) {
+    public void setAz(List<Double> az) {
         this.az = az;
     }
 }

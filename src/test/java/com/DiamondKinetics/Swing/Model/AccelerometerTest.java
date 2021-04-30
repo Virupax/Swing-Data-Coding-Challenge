@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccelerometerTest {
 
     private static final double DELTA_FOR_LOSS_TOLERANCE = 0.00000001;
@@ -19,13 +22,18 @@ public class AccelerometerTest {
 
     @Test
     public void settersGettersTest() {
-        classUnderTest.setAx(0.9455502);
-        classUnderTest.setAy(-1.358932);
-        classUnderTest.setAz(1.855502);
+        List<Double> values = new ArrayList<>();
+        values.add(0.9455502);
+        values.add(-1.358932);
+        values.add(1.855502);
 
-        assertEquals(0.9455502,classUnderTest.getAx(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(-1.358932,classUnderTest.getAy(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(1.855502,classUnderTest.getAz(), DELTA_FOR_LOSS_TOLERANCE);
+        classUnderTest.setAx(values);
+        classUnderTest.setAy(values);
+        classUnderTest.setAz(values);
+
+        assertEquals(values,classUnderTest.getAx());
+        assertEquals(values, classUnderTest.getAy());
+        assertEquals(values,classUnderTest.getAz());
 
         assertNotNull(classUnderTest.getAx());
         assertNotNull(classUnderTest.getAy());
@@ -34,13 +42,13 @@ public class AccelerometerTest {
 
     @Test
     public void settersGettersTest_BlankValues() {
-        classUnderTest.setAx(0.0);
-        classUnderTest.setAy(0.0);
-        classUnderTest.setAz(0.0);
+        classUnderTest.setAx(new ArrayList<>());
+        classUnderTest.setAy(new ArrayList<>());
+        classUnderTest.setAz(new ArrayList<>());
 
-        assertEquals(0.0,classUnderTest.getAx(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(0.0,classUnderTest.getAy(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(0.0,classUnderTest.getAz(), DELTA_FOR_LOSS_TOLERANCE);
+        assertEquals(new ArrayList<>(),classUnderTest.getAx());
+        assertEquals(new ArrayList<>(),classUnderTest.getAy());
+        assertEquals(new ArrayList<>(),classUnderTest.getAz());
     }
 
     @Test
@@ -52,10 +60,15 @@ public class AccelerometerTest {
 
     @Test
     public void parametrizedConstructor() {
-        classUnderTest = new Accelerometer(0.9455502, -1.358932, 1.855502);
+        List<Double> values = new ArrayList<>();
+        values.add(0.9455502);
+        values.add(-1.358932);
+        values.add(1.855502);
 
-        assertEquals(0.9455502,classUnderTest.getAx(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(-1.358932,classUnderTest.getAy(), DELTA_FOR_LOSS_TOLERANCE);
-        assertEquals(1.855502,classUnderTest.getAz(), DELTA_FOR_LOSS_TOLERANCE);
+        classUnderTest = new Accelerometer(values, values, values);
+
+        assertEquals(values,classUnderTest.getAx());
+        assertEquals(values,classUnderTest.getAy());
+        assertEquals(values,classUnderTest.getAz());
     }
 }
