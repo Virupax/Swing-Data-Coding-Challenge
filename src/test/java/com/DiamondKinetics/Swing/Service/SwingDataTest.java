@@ -42,16 +42,9 @@ public class SwingDataTest {
 
     @Test
     public void searchContinuityAboveValueTestInvalidInputs(){
-        Throwable e = null;
-        ResultData resultData = null;
-        try{
-            resultData = classUnderTest.searchContinuityAboveValue("ay",683, 429, 0.390000, 9000);
-        }catch (IllegalArgumentException ex){
-            e = ex;
-        }
-
-        assertEquals("indexBegin cannot be greater than indexEnd", e.getMessage());
-        assertTrue(e instanceof IllegalArgumentException);
+        ResultData resultData = classUnderTest.searchContinuityAboveValue("ay",683, 429, 0.390000, 9000);
+        assertEquals("indexBegin cannot be greater than indexEnd", resultData.getErrorMessage());
+//        assertTrue(e instanceof IllegalArgumentException);
     }
 
 
@@ -78,17 +71,9 @@ public class SwingDataTest {
 
     @Test
     public void backSearchContinuityWithinRangeInvalidInputs(){
-        Throwable e = null;
-        ResultData resultData = null;
-        try{
-            resultData = classUnderTest.backSearchContinuityWithinRange("wx", 380, 0, 4.390000, 3.0, 3);
-        }catch (IllegalArgumentException ex){
-            e = ex;
-        }
-
-        assertEquals("thresholdLo cannot be greater than thresholdHi", e.getMessage());
-        assertTrue(e instanceof IllegalArgumentException);
-
+        ResultData resultData =  classUnderTest.backSearchContinuityWithinRange("wx", 380, 0, 4.390000, 3.0, 3);
+        assertEquals("thresholdLo cannot be greater than thresholdHi", resultData.getErrorMessage());
+//        assertTrue(e instanceof IllegalArgumentException);
     }
 
 

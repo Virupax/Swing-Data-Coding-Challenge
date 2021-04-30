@@ -2,7 +2,6 @@ package com.DiamondKinetics.Swing.Controller;
 
 import com.DiamondKinetics.Swing.Service.ISwingData;
 import com.DiamondKinetics.Swing.Model.ResultData;
-import com.DiamondKinetics.Swing.Model.SensorData;
 import com.DiamondKinetics.Swing.Service.SwingData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/")
 public class SwingDataController {
 
-    @Autowired
     private ISwingData iSwingData;
+
+    @Autowired
+    public SwingDataController(){
+        iSwingData = new SwingData();
+    }
 
     //GET /api/v1/search-continuity-above-value
     @RequestMapping("/search-continuity-above-value")

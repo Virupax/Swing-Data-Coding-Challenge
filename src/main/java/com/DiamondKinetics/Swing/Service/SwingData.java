@@ -3,7 +3,6 @@ package com.DiamondKinetics.Swing.Service;
 import com.DiamondKinetics.Swing.Model.ResultData;
 import com.DiamondKinetics.Swing.Model.SensorData;
 import com.DiamondKinetics.Swing.Model.SwingDataColumn;
-import com.DiamondKinetics.Swing.Util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -41,18 +40,15 @@ public class SwingData implements ISwingData {
     private ResultData searchContinuityAboveValue(List<Double> data, int indexBegin, int indexEnd, double threshold, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-        try {
-            Predicate<Double> greaterThanThreshold = i -> i > threshold;
-            Predicate<Double> alwaysTrue = i -> true;
-            Predicate<Integer> indexLimit = i -> i < indexEnd;
 
-            int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, 1,  winLength, greaterThanThreshold, alwaysTrue, indexLimit);
-            if(indexMatchingCriteria > -1){
-                resultData.setIndex(indexMatchingCriteria);
-                resultData.setSuccess(Boolean.TRUE);
-            }
-        }catch (Exception ex){
-            resultData.setErrorMessage(ex.getMessage());
+        Predicate<Double> greaterThanThreshold = i -> i > threshold;
+        Predicate<Double> alwaysTrue = i -> true;
+        Predicate<Integer> indexLimit = i -> i < indexEnd;
+
+        int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, 1,  winLength, greaterThanThreshold, alwaysTrue, indexLimit);
+        if(indexMatchingCriteria > -1){
+            resultData.setIndex(indexMatchingCriteria);
+            resultData.setSuccess(Boolean.TRUE);
         }
         return resultData;
     }
@@ -71,18 +67,15 @@ public class SwingData implements ISwingData {
     private ResultData backSearchContinuityWithinRange(List<Double> data, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-        try {
-            Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
-            Predicate<Double> alwaysTrue = i -> true;
-            Predicate<Integer> indexLimit = i -> i > indexEnd;
 
-            int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, -1,  winLength, withInThreshold, alwaysTrue, indexLimit);
-            if(indexMatchingCriteria > -1){
-                resultData.setIndex(indexMatchingCriteria);
-                resultData.setSuccess(Boolean.TRUE);
-            }
-        }catch (Exception ex){
-            resultData.setErrorMessage(ex.getMessage());
+        Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
+        Predicate<Double> alwaysTrue = i -> true;
+        Predicate<Integer> indexLimit = i -> i > indexEnd;
+
+        int indexMatchingCriteria = searchForCriteria(data, data, indexBegin, indexEnd, -1,  winLength, withInThreshold, alwaysTrue, indexLimit);
+        if(indexMatchingCriteria > -1) {
+            resultData.setIndex(indexMatchingCriteria);
+            resultData.setSuccess(Boolean.TRUE);
         }
         return resultData;
     }
@@ -102,21 +95,17 @@ public class SwingData implements ISwingData {
     private ResultData searchContinuityAboveValueTwoSignals(List<Double> data1, List<Double> data2, int indexBegin, int indexEnd, double threshold1, double threshold2, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
-        try {
-            Predicate<Double> list1Threshold = i -> i > threshold1;
-            Predicate<Double> list2Threshold = i -> i > threshold2;
-            Predicate<Integer> indexLimit = i -> i < indexEnd;
 
-            int indexMatchingCriteria = searchForCriteria(data1, data2, indexBegin, indexEnd, 1,  winLength, list1Threshold, list2Threshold, indexLimit);
-            if(indexMatchingCriteria > -1){
-                resultData.setIndex(indexMatchingCriteria);
-                resultData.setSuccess(Boolean.TRUE);
-            }
-        }catch (Exception ex){
-            resultData.setErrorMessage(ex.getMessage());
+        Predicate<Double> list1Threshold = i -> i > threshold1;
+        Predicate<Double> list2Threshold = i -> i > threshold2;
+        Predicate<Integer> indexLimit = i -> i < indexEnd;
+
+        int indexMatchingCriteria = searchForCriteria(data1, data2, indexBegin, indexEnd, 1,  winLength, list1Threshold, list2Threshold, indexLimit);
+        if(indexMatchingCriteria > -1){
+            resultData.setIndex(indexMatchingCriteria);
+            resultData.setSuccess(Boolean.TRUE);
         }
         return resultData;
-
     }
 
     /**
@@ -130,7 +119,7 @@ public class SwingData implements ISwingData {
      * @param winLength
      * @return ResultData
      * */
-    private ResultData searchMultiContinuityWithinRange(List<Double > data, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
+    private ResultData searchMultiContinuityWithinRange(List<Double> data, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
         ResultData resultData = new ResultData();
         resultData.setSuccess(Boolean.FALSE);
 
@@ -138,67 +127,89 @@ public class SwingData implements ISwingData {
         List<Integer> endIndices = new ArrayList<>();
         Map<String, List<Integer>> map = new HashMap<>();
 
-        try {
-            Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
-            Predicate<Double> alwaysTrue = i -> true;
-            Predicate<Integer> indexLimit = i -> i < indexEnd;
+        Predicate<Double> withInThreshold = i -> i > thresholdLo && i < thresholdHi;
+        Predicate<Double> alwaysTrue = i -> true;
+        Predicate<Integer> indexLimit = i -> i < indexEnd;
 
-            for(int i = indexBegin; i<indexEnd; i++){
-                int indexMatchingCriteria = searchForCriteria(data, data, i, indexEnd, 1, winLength, withInThreshold, alwaysTrue, indexLimit);
-                if (indexMatchingCriteria > -1) {
-                    startIndices.add(indexMatchingCriteria);
-                    endIndices.add(indexMatchingCriteria + winLength);
-                    resultData.setSuccess(Boolean.TRUE);
-                    i = indexMatchingCriteria;
-                }
+        for(int i = indexBegin; i<indexEnd; i++){
+            int indexMatchingCriteria = searchForCriteria(data, data, i, indexEnd, 1, winLength, withInThreshold, alwaysTrue, indexLimit);
+            if (indexMatchingCriteria > -1) {
+                startIndices.add(indexMatchingCriteria);
+                endIndices.add(indexMatchingCriteria + winLength);
+                resultData.setSuccess(Boolean.TRUE);
+                i = indexMatchingCriteria;
             }
-            map.put("startIndices", startIndices);
-            map.put("endIndices", endIndices);
-            resultData.setIndices(map);
-
-        } catch (Exception ex) {
-            resultData.setErrorMessage(ex.getMessage());
         }
-        return resultData;
+        map.put("startIndices", startIndices);
+        map.put("endIndices", endIndices);
+        resultData.setIndices(map);
 
+        return resultData;
     }
 
 
     @Override
     public ResultData searchContinuityAboveValue(String dataColumn, int indexBegin, int indexEnd, double threshold, int winLength){
-        iValidateSwingData.validateDataInputColumn(dataColumn);
-        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
-        iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
+        ResultData resultData = new ResultData();
+        try {
+            iValidateSwingData.validateDataInputColumn(dataColumn);
+            iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+            iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
 
-        ResultData resultData = searchContinuityAboveValue(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, threshold, winLength);
+            resultData = searchContinuityAboveValue(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, threshold, winLength);
+
+        }catch (IllegalArgumentException ex){
+            resultData.setSuccess(Boolean.FALSE);
+            resultData.setErrorMessage(ex.getMessage());
+        }
         return resultData;
     }
     @Override
     public ResultData backSearchContinuityWithinRange(String dataColumn, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength) {
-        iValidateSwingData.validateDataInputColumn(dataColumn);
-        iValidateSwingData.validateReverseBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
-        iValidateSwingData.validateWinLength(indexEnd, indexBegin, winLength);
-        iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
+        ResultData resultData = new ResultData();
+        try{
+            iValidateSwingData.validateDataInputColumn(dataColumn);
+            iValidateSwingData.validateReverseBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+            iValidateSwingData.validateWinLength(indexEnd, indexBegin, winLength);
+            iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
 
-        ResultData resultData = backSearchContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+            resultData = backSearchContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+
+        }catch (IllegalArgumentException ex){
+            resultData.setSuccess(Boolean.FALSE);
+            resultData.setErrorMessage(ex.getMessage());
+        }
         return resultData;
     }
     @Override
     public ResultData searchContinuityAboveValueTwoSignals(String dataColumn1, String dataColumn2, int indexBegin, int indexEnd, double threshold1, double threshold2, int winLength){
-        iValidateSwingData.validateDataInputColumn(dataColumn1);
-        iValidateSwingData.validateDataInputColumn(dataColumn2);
-        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
-        iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
+        ResultData resultData = new ResultData();
+        try {
+            iValidateSwingData.validateDataInputColumn(dataColumn1);
+            iValidateSwingData.validateDataInputColumn(dataColumn2);
+            iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+            iValidateSwingData.validateWinLength(indexBegin, indexEnd, winLength);
 
-        ResultData resultData = searchContinuityAboveValueTwoSignals(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn1)), sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn2)), indexBegin, indexEnd, threshold1, threshold2, winLength);
+            resultData = searchContinuityAboveValueTwoSignals(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn1)), sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn2)), indexBegin, indexEnd, threshold1, threshold2, winLength);
+
+        }catch (IllegalArgumentException ex){
+            resultData.setSuccess(Boolean.FALSE);
+            resultData.setErrorMessage(ex.getMessage());
+        }
         return resultData;
     }
     @Override
     public ResultData searchMultiContinuityWithinRange(String dataColumn, int indexBegin, int indexEnd, double thresholdLo, double thresholdHi, int winLength){
-        iValidateSwingData.validateDataInputColumn(dataColumn);
-        iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
-        iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
-        ResultData resultData = searchMultiContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+        ResultData resultData = new ResultData();
+        try {
+            iValidateSwingData.validateDataInputColumn(dataColumn);
+            iValidateSwingData.validateBounds(indexBegin, indexEnd, sensorData.getTimeStamp().size());
+            iValidateSwingData.validateThresholds(thresholdLo, thresholdHi);
+            resultData = searchMultiContinuityWithinRange(sensorData.getColumnData(SwingDataColumn.valueOf(dataColumn)), indexBegin, indexEnd, thresholdLo, thresholdHi, winLength);
+        }catch (IllegalArgumentException ex){
+            resultData.setSuccess(Boolean.FALSE);
+            resultData.setErrorMessage(ex.getMessage());
+        }
         return resultData;
     }
 
